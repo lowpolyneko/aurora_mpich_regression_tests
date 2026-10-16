@@ -24,11 +24,11 @@ writable by the allocation group as well as by the user who ran the build.
 
 ## Reuse
 
-A run directory is stamped with the hwloc prefix, the sha256 of
-`ci/build-mpich.sh`, and the MPICH commit. If the stamp matches, the build is
-skipped and the existing install is reused as-is, so concurrent pipelines
-testing the same ref do not interfere. A branch that moves gets a new stamp and
-rebuilds in place. A different ref gets a new directory.
+A run directory is stamped with the sha256 of `ci/build-mpich.sh` and the
+MPICH commit. If the stamp matches, the build is skipped and the existing
+install is reused as-is, so concurrent pipelines testing the same ref do not
+interfere. A branch that moves gets a new stamp and rebuilds in place. A
+different ref gets a new directory.
 
 ## Variables
 

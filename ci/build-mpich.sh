@@ -68,7 +68,7 @@ curl -fsS --max-time 15 -o /dev/null https://github.com/ \
     || export http_proxy=http://proxy.alcf.anl.gov:3128 https_proxy=http://proxy.alcf.anl.gov:3128
 
 sha=$(resolve_ref "$ref")
-stamp="$hwloc $(sha256sum "$0" | cut -d' ' -f1) $sha"
+stamp="$(sha256sum "$0" | cut -d' ' -f1) $sha"
 
 if [ "$(cat "$prefix/.stamp" 2>/dev/null)" = "$stamp" ]; then
     echo "==> reusing $prefix at $sha"
@@ -92,7 +92,7 @@ fi
 stage git -C "$src" fetch --depth 1 origin "$ref"
 stage git -C "$src" checkout --detach FETCH_HEAD
 sha=$(git -C "$src" rev-parse HEAD)
-stamp="$hwloc $(sha256sum "$0" | cut -d' ' -f1) $sha"
+stamp="$(sha256sum "$0" | cut -d' ' -f1) $sha"
 
 stage git -C "$src" submodule update --init --recursive --depth 1
 
