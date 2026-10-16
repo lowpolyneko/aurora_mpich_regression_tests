@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Run directories are shared with the allocation group.
+umask 002
+
 alloc=${MPICH_CI_ALLOCATION:-Aurora_testing}
 root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
 remote=https://github.com/pmodels/mpich.git

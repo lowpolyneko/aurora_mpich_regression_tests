@@ -19,6 +19,9 @@ Run directories are under `$MPICH_CI_ROOT`
 name instead and wipe that directory before building. Old run directories are
 not removed automatically.
 
+The build sets `umask 002`, so the run directory and its contents are
+writable by the allocation group as well as by the user who ran the build.
+
 ## Reuse
 
 A run directory is stamped with the hwloc prefix, the sha256 of
