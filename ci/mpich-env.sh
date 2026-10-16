@@ -1,6 +1,12 @@
 alloc=${MPICH_CI_ALLOCATION:-Aurora_testing}
 root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
-prefix=$root/mpich
+if [ -n "${CI_PIPELINE_ID:-}" ]; then
+    run=mpich-${MPICH_REF:-aurora_test}
+else
+    run=$(whoami)
+fi
+runroot=$root/$run
+prefix=$runroot/mpich
 
 [ -f "$prefix/.stamp" ] || { echo "no MPICH build at $prefix" >&2; exit 1; }
 
@@ -8,7 +14,7 @@ module reset
 module unload mpich
 module load hwloc/2.12.2
 
-export PATH=$prefix/bin:$root/bats-core/bin:$PATH
+export PATH=$prefix/bin:$runroot/bats-core/bin:$PATH
 export LD_LIBRARY_PATH=$prefix/lib:/opt/cray/libfabric/2.3.1/lib:/opt/cray/libfabric/2.3.1/lib64${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 export PALS_PMI=pmix
 export FI_PROVIDER='cxi,tcp;ofi_rxm'
