@@ -80,5 +80,3 @@ test-32node:
       -q debug-scaling
   script:
     - ./ci/run-suite.sh 32node
-
-
