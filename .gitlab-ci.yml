@@ -69,3 +69,16 @@ test-2node:
       -q debug
   script:
     - ./ci/run-suite.sh 2node
+
+
+test-32node:
+  extends: .aurora-debug-test
+  variables:
+    ANL_AURORA_SCHEDULER_PARAMETERS: >-
+      -A $[[ inputs.allocation ]]
+      -l select=32,walltime=1:00:00,filesystems=home:flare
+      -q debug-scaling
+  script:
+    - ./ci/run-suite.sh 32node
+
+

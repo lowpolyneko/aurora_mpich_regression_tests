@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-suite=${1:?usage: run-suite.sh <1node|2node>}
+suite=${1:?usage: run-suite.sh <1node|2node|32node>}
 here=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
 source "$here/ci/mpich-env.sh"
 
