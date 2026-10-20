@@ -4,6 +4,7 @@
 #
 #   ./run_tests.sh 1node
 #   ./run_tests.sh 2node
+#   ./run_tests.sh 32node
 #
 # Needs mpiexec and bats on PATH. To get bats:
 #   git clone --depth 1 -b v1.11.0 https://github.com/bats-core/bats-core.git
