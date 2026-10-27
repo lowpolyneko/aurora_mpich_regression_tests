@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
 #
-# Run the Aurora reproducer tests in one directory.
+# Run a bats suite in one directory.
 #
 #   ./run_tests.sh 1node
 #   ./run_tests.sh 2node
 #   ./run_tests.sh 32node
+#   ./run_tests.sh osu/2node
 #
-# Needs mpiexec and bats on PATH. To get bats:
+# Needs mpiexec, bats, and (for the osu tests) mpicc on PATH.
+# To get bats:
 #   git clone --depth 1 -b v1.11.0 https://github.com/bats-core/bats-core.git
 #   export PATH=$PWD/bats-core/bin:$PATH
 

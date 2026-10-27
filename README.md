@@ -19,8 +19,9 @@ Run directories are under `$MPICH_CI_ROOT`
 name instead and wipe that directory before building. Old run directories are
 not removed automatically.
 
-The build sets `umask 002`, so the run directory and its contents are
-writable by the allocation group as well as by the user who ran the build.
+MPICH builds and CI test jobs set `umask 002`, so the run directory and
+generated test artifacts are writable by the allocation group as well as by
+the user.
 
 ## Reuse
 
@@ -43,10 +44,18 @@ different ref gets a new directory.
 
 - `bin/build-mpich.sh` builds `$MPICH_REF` into its run directory and skips
   the build when the stamp matches.
+- `bin/run-osu.sh` locates the SYCL-enabled OSU 7.5.2
+  binaries in Aurora's software stack and runs them with the MPICH selected
+  by `mpicc`. Its `LD_PRELOAD` overrides the binaries' RPATH to a system
+  MPICH.
+  The OSU suite has no node selections by default. Set `osu_nodes` to choose
+  which benchmark jobs to run.
+- `osu/parse_metrics.py` writes benchmark results with explicit units to
+  `.metrics.json` files. CI jobs expose them under **OSU metrics**.
 - `bin/mpich-env.sh` is sourced by the test jobs. It sets up the modules,
   `PATH`, `LD_LIBRARY_PATH`, and the MPICH/libfabric settings for the run's
   install, and checks that `mpicc` resolves to it.
-- `bin/run-suite.sh <1node|2node|32node>` runs one bats suite and writes junit
-  reports to `reports/`.
-- `run_tests.sh <1node|2node>` runs a suite locally with the `mpiexec` and
+- `bin/run-suite.sh <suite-directory>` runs one bats suite and writes junit
+  reports, including full OSU benchmark output, to `reports/`.
+- `run_tests.sh <suite-directory>` runs a suite locally with the `mpiexec` and
   `bats` from your `PATH`.
