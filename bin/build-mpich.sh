@@ -68,9 +68,6 @@ hwloc=$(dirname "$(dirname "$(command -v hwloc-info)")")
 
 mkdir -p "$runroot"
 
-curl -fsS --max-time 15 -o /dev/null https://github.com/ \
-    || export http_proxy=http://proxy.alcf.anl.gov:3128 https_proxy=http://proxy.alcf.anl.gov:3128
-
 sha=$(resolve_ref "$ref")
 stamp="$(sha256sum "$0" | cut -d' ' -f1) $sha"
 

@@ -28,6 +28,12 @@ include:
     inputs:
       cluster: $[[ inputs.cluster ]]
 
+variables:
+  HTTP_PROXY: http://proxy.alcf.anl.gov:3128
+  HTTPS_PROXY: http://proxy.alcf.anl.gov:3128
+  http_proxy: http://proxy.alcf.anl.gov:3128
+  https_proxy: http://proxy.alcf.anl.gov:3128
+
 workflow:
   rules:
     - if: '$CI_PIPELINE_SOURCE == "web"'
