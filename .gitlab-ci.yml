@@ -2,18 +2,31 @@ spec:
   inputs:
     allocation:
       default: Aurora_testing
-      description: ALCF allocation to charge the batch jobs to (-A).
+      description: ALCF allocation to charge the jobs to (-A).
+    cluster:
+      options: [aurora, aurora-eval, sunspot]
+      default: aurora
+      description: Cluster the jobs build and test on (shell and batch runners).
+    queue:
+      default: debug
+      description: Test job queue (-q), e.g. debug, debug-scaling, next-eval.
+    mpich_refs:
+      type: array
+      default: ['aurora_test']
+      description: MPICH refs to build and test.
+    nodes:
+      type: array
+      default: ['1', '2', '32']
+      description: Node counts to test, one <N>node suite per value.
 ---
-
 stages:
   - build
   - test
 
 include:
-  - project: 'anl/ci-resources/defaults'
-    ref: main
-    file:
-      - '/runners.yml'
+  - local: 'ci/runners.yml'
+    inputs:
+      cluster: $[[ inputs.cluster ]]
 
 workflow:
   rules:
@@ -22,26 +35,47 @@ workflow:
     - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH ==
         $CI_DEFAULT_BRANCH'
 
-variables:
-  MPICH_REF: aurora_test
-  MPICH_CI_ALLOCATION: $[[ inputs.allocation ]]
+.mpich-ci-shell:
+  extends: .mpich-ci-shell-runner
+  variables:
+    MPICH_CI_ALLOCATION: $[[ inputs.allocation ]]
+  parallel:
+    matrix:
+      - MPICH_REF: $[[ inputs.mpich_refs ]]
 
-build-mpich:
-  extends: .aurora-shell-runner
-  stage: build
-  timeout: 2h
-  interruptible: true
-  script:
-    - ./ci/build-mpich.sh
+.mpich-ci-batch:
+  extends: .mpich-ci-batch-runner
+  variables:
+    MPICH_CI_ALLOCATION: $[[ inputs.allocation ]]
+  parallel:
+    matrix:
+      - MPICH_REF: $[[ inputs.mpich_refs ]]
+        MPICH_CI_NODES: $[[ inputs.nodes ]]
 
-.aurora-debug-test:
-  extends: .aurora-batch-runner
+.mpich-ci-test:
+  extends: .mpich-ci-batch
   stage: test
   timeout: 1 day
   interruptible: false
-  resource_group: debug_queue
+  resource_group: $[[ inputs.cluster ]]-$[[ inputs.queue ]]
   needs:
-    - build-mpich
+    - job: build-mpich
+      parallel:
+        matrix:
+          - MPICH_REF: '$[[ matrix.MPICH_REF ]]'
+  variables:
+    ANL_AURORA_SCHEDULER_PARAMETERS: >-
+      -A $[[ inputs.allocation ]]
+      -l select=${MPICH_CI_NODES},walltime=01:00:00,filesystems=home:flare
+      -q $[[ inputs.queue ]]
+    ANL_AURORA_EVAL_SCHEDULER_PARAMETERS: >-
+      -A $[[ inputs.allocation ]]
+      -l select=${MPICH_CI_NODES},walltime=01:00:00,filesystems=home:flare
+      -q $[[ inputs.queue ]]
+    ANL_SUNSPOT_SCHEDULER_PARAMETERS: >-
+      -A $[[ inputs.allocation ]]
+      -l select=${MPICH_CI_NODES},walltime=01:00:00,filesystems=home:tegu
+      -q $[[ inputs.queue ]]
   artifacts:
     when: always
     expire_in: 1 week
@@ -50,33 +84,15 @@ build-mpich:
     reports:
       junit: reports/*.xml
 
-test-1node:
-  extends: .aurora-debug-test
-  variables:
-    ANL_AURORA_SCHEDULER_PARAMETERS: >-
-      -A $[[ inputs.allocation ]]
-      -l select=1,walltime=1:00:00,filesystems=home:flare
-      -q debug
+build-mpich:
+  extends: .mpich-ci-shell
+  stage: build
+  timeout: 2h
+  interruptible: true
   script:
-    - ./ci/run-suite.sh 1node
+    - ./ci/build-mpich.sh
 
-test-2node:
-  extends: .aurora-debug-test
-  variables:
-    ANL_AURORA_SCHEDULER_PARAMETERS: >-
-      -A $[[ inputs.allocation ]]
-      -l select=2,walltime=1:00:00,filesystems=home:flare
-      -q debug
+test-suite:
+  extends: .mpich-ci-test
   script:
-    - ./ci/run-suite.sh 2node
-
-
-test-32node:
-  extends: .aurora-debug-test
-  variables:
-    ANL_AURORA_SCHEDULER_PARAMETERS: >-
-      -A $[[ inputs.allocation ]]
-      -l select=32,walltime=1:00:00,filesystems=home:flare
-      -q debug-scaling
-  script:
-    - ./ci/run-suite.sh 32node
+    - ./ci/run-suite.sh "${MPICH_CI_NODES}node"
