@@ -24,7 +24,7 @@ writable by the allocation group as well as by the user who ran the build.
 
 ## Reuse
 
-A run directory is stamped with the sha256 of `ci/build-mpich.sh` and the
+A run directory is stamped with the sha256 of `bin/build-mpich.sh` and the
 MPICH commit. If the stamp matches, the build is skipped and the existing
 install is reused as-is, so concurrent pipelines testing the same ref do not
 interfere. A branch that moves gets a new stamp and rebuilds in place. A
@@ -41,12 +41,12 @@ different ref gets a new directory.
 
 ## Scripts
 
-- `ci/build-mpich.sh` builds `$MPICH_REF` into its run directory and skips
+- `bin/build-mpich.sh` builds `$MPICH_REF` into its run directory and skips
   the build when the stamp matches.
-- `ci/mpich-env.sh` is sourced by the test jobs. It sets up the modules,
+- `bin/mpich-env.sh` is sourced by the test jobs. It sets up the modules,
   `PATH`, `LD_LIBRARY_PATH`, and the MPICH/libfabric settings for the run's
   install, and checks that `mpicc` resolves to it.
-- `ci/run-suite.sh <1node|2node|32node>` runs one bats suite and writes junit
+- `bin/run-suite.sh <1node|2node|32node>` runs one bats suite and writes junit
   reports to `reports/`.
 - `run_tests.sh <1node|2node>` runs a suite locally with the `mpiexec` and
   `bats` from your `PATH`.

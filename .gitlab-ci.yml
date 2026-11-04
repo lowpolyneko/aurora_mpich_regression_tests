@@ -90,9 +90,9 @@ build-mpich:
   timeout: 2h
   interruptible: true
   script:
-    - ./ci/build-mpich.sh
+    - ./bin/build-mpich.sh
 
 test-suite:
   extends: .mpich-ci-test
   script:
-    - ./ci/run-suite.sh "${MPICH_CI_NODES}node"
+    - ./bin/run-suite.sh "${MPICH_CI_NODES}node"
