@@ -5,7 +5,11 @@ set -euo pipefail
 umask 002
 
 alloc=${MPICH_CI_ALLOCATION:-Aurora_testing}
-root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
+if [ -d /lus/tegu ]; then
+    root=${MPICH_CI_ROOT:-/lus/tegu/projects/$alloc/aurora-mpich-ci}
+else
+    root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
+fi
 remote=https://github.com/pmodels/mpich.git
 ref=${MPICH_REF:-aurora_test}
 if [ -n "${CI_PIPELINE_ID:-}" ]; then

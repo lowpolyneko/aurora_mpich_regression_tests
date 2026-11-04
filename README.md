@@ -34,7 +34,7 @@ different ref gets a new directory.
 
 | Variable              | Default                                                   | Meaning                                  |
 | --------------------- | --------------------------------------------------------- | ---------------------------------------- |
-| `MPICH_CI_ROOT`       | `/lus/flare/projects/$MPICH_CI_ALLOCATION/aurora-mpich-ci` | base directory on Aurora                 |
+| `MPICH_CI_ROOT`       | `/lus/flare/projects/$MPICH_CI_ALLOCATION/aurora-mpich-ci` | base directory (tegu on Sunspot)         |
 | `MPICH_CI_ALLOCATION` | `Aurora_testing`                                          | allocation in the default root path      |
 | `MPICH_REF`           | `aurora_test`                                             | MPICH ref to build (branch, tag, or sha) |
 | `MPICH_CI_JOBS`       | `48`                                                      | `make -j` parallelism                    |
@@ -46,7 +46,7 @@ different ref gets a new directory.
 - `ci/mpich-env.sh` is sourced by the test jobs. It sets up the modules,
   `PATH`, `LD_LIBRARY_PATH`, and the MPICH/libfabric settings for the run's
   install, and checks that `mpicc` resolves to it.
-- `ci/run-suite.sh <1node|2node>` runs one bats suite and writes junit
+- `ci/run-suite.sh <1node|2node|32node>` runs one bats suite and writes junit
   reports to `reports/`.
 - `run_tests.sh <1node|2node>` runs a suite locally with the `mpiexec` and
   `bats` from your `PATH`.

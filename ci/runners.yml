@@ -1,0 +1,17 @@
+spec:
+  inputs:
+    cluster:
+      description: Cluster the jobs run on.
+---
+
+include:
+  - project: 'anl/ci-resources/defaults'
+    ref: main
+    file:
+      - '/runners.yml'
+
+.mpich-ci-shell-runner:
+  extends: .$[[ inputs.cluster ]]-shell-runner
+
+.mpich-ci-batch-runner:
+  extends: .$[[ inputs.cluster ]]-batch-runner

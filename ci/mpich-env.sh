@@ -1,5 +1,9 @@
 alloc=${MPICH_CI_ALLOCATION:-Aurora_testing}
-root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
+if [ -d /lus/tegu ]; then
+    root=${MPICH_CI_ROOT:-/lus/tegu/projects/$alloc/aurora-mpich-ci}
+else
+    root=${MPICH_CI_ROOT:-/lus/flare/projects/$alloc/aurora-mpich-ci}
+fi
 if [ -n "${CI_PIPELINE_ID:-}" ]; then
     run=mpich-${MPICH_REF:-aurora_test}
 else
@@ -45,3 +49,4 @@ printf '#include <mpi.h>\nint main(void){return MPI_Init(0, 0);}\n' >"$probe/pro
 mpicc "$probe/probe.c" -o "$probe/probe"
 ldd "$probe/probe" | grep -q "$prefix/lib/libmpi.so" \
     || { echo "libmpi does not resolve to the CI build" >&2; exit 1; }
+ldd "$probe/probe" | grep libpmix || true
