@@ -1,0 +1,8 @@
+# Local test framework and CI reports
+/bats-core/
+/reports/
+
+# Output captured by bats tests
+/1node/*/output
+/2node/*/output
+/32node/*/output
