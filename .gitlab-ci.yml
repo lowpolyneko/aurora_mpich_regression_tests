@@ -18,6 +18,10 @@ spec:
       type: array
       default: ['1', '2', '32']
       description: Node counts to test, one <N>node suite per value.
+    osu_nodes:
+      type: array
+      default: []
+      description: Node counts for OSU suites (osu/<N>node).
 ---
 stages:
   - build
@@ -102,3 +106,14 @@ test-suite:
   extends: .mpich-ci-test
   script:
     - ./bin/run-suite.sh "${MPICH_CI_NODES}node"
+
+test-osu:
+  extends: .mpich-ci-test
+  artifacts:
+    expose_as: 'OSU metrics'
+  parallel:
+    matrix:
+      - MPICH_REF: $[[ inputs.mpich_refs ]]
+        MPICH_CI_NODES: $[[ inputs.osu_nodes ]]
+  script:
+    - ./bin/run-suite.sh "osu/${MPICH_CI_NODES}node"
