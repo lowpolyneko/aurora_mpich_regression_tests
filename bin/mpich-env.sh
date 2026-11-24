@@ -1,3 +1,4 @@
+umask 002
 alloc=${MPICH_CI_ALLOCATION:-Aurora_testing}
 if [ -d /lus/tegu ]; then
     root=${MPICH_CI_ROOT:-/lus/tegu/projects/$alloc/aurora-mpich-ci}
